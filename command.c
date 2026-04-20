@@ -3,11 +3,20 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include <dirent.h>
 
  void listDir() {
 	//ls
-	printf("this is ls: not implemented yet\n");
-	return;
+	DIR* ptr;
+	struct dirent* read_dir;
+	ptr = opendir(".");
+
+	while ((read_dir = readdir(ptr)) != NULL) {
+		write(STDOUT_FILENO, read_dir->d_name, strlen(read_dir->d_name));
+		write(STDOUT_FILENO, " ", 1);
+	}
+	write(STDOUT_FILENO, "\n", 1);
+	closedir(ptr);
  }
  
  void showCurrentDir() {
@@ -30,8 +39,7 @@
 
  void changeDir(char *dirName) {
 	//cd
-	printf("this is cd: not implemented yet\n");
-	return;
+	chdir(dirName);
  }
  
  void copyFile(char *sourcePath, char *destinationPath) {
