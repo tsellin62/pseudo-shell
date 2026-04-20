@@ -4,6 +4,8 @@
 #include "command.h"
 #include "string.h"
 
+int running = 1;
+
 //enum to help choose command
 typedef enum {
 	LS,
@@ -14,6 +16,7 @@ typedef enum {
 	MV,
 	RM,
 	CAT,
+	QUIT,
 	UNKNOWN
 } command_type;
 
@@ -27,6 +30,7 @@ command_type get_command(char* str) {
 	if (strcmp(str, "mv") == 0) return MV;
 	if (strcmp(str, "rm") == 0) return RM;
 	if (strcmp(str, "cat") == 0) return CAT;
+	if (strcmp(str, "quit") == 0) return QUIT;
 	return UNKNOWN;
 }
 
@@ -126,6 +130,14 @@ void execute_command(command_line* args) {
 				printf("Error! Unsupported parameters for command: cat\n");
 			}
 			break;
+		case QUIT:
+			if (args->num_token == 1) {
+				running = 0;
+			}
+			else {
+				printf("Error! Unsupported parameters for command: quit\n");
+			}
+			break;
 		case UNKNOWN:
 			printf("Error! Unrecognized command: %s\n", args->command_list[0]);
 			break;
@@ -136,17 +148,22 @@ int main(int argc, char* argv[]) {
 	char *input_line = NULL;
 	size_t len = 0;
 	ssize_t read;
-	printf(">>> ");
-	read = getline(&input_line, &len, stdin);
-	if (read != -1) {
-		command_line cmd = str_tokenize(input_line);
-		printf("%d\n", cmd.num_token);
-		for (int i = 0; i < cmd.num_token; i++) {
-			command_line args = space_split(cmd.command_list[i]);
-			execute_command(&args);
-			free_command_line(&args);
-		}		
-		free_command_line(&cmd);	
+
+	while (running) {
+		printf(">>> ");
+		read = getline(&input_line, &len, stdin);
+		if (read != -1) {
+			command_line cmd = str_tokenize(input_line);
+			for (int i = 0; i < cmd.num_token; i++) {
+				command_line args = space_split(trim(cmd.command_list[i]));
+				execute_command(&args);
+				free_command_line(&args);
+			}		
+			free_command_line(&cmd);	
+		}
+		free(input_line);
+		input_line = NULL;
+		len = 0;
 	}
 	free(input_line);
 	return 0;
