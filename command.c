@@ -56,8 +56,9 @@
  
  void deleteFile(char *filename) {
 	 //rm
-	 printf("this is rm: not implemented yet\n");
-	 return;
+	 if (remove(filename) == -1) {
+		 perror("Could not remove file");
+	 }
 }
 
  void displayFile(char *filename) {
