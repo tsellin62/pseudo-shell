@@ -3,6 +3,7 @@
 #include "string_parser.h"
 #include "command.h"
 #include "string.h"
+#include <unistd.h>
 
 int running = 1;
 
@@ -148,23 +149,49 @@ int main(int argc, char* argv[]) {
 	char *input_line = NULL;
 	size_t len = 0;
 	ssize_t read;
+	FILE* input = stdin;
+
+	if (argc == 3 && strcmp(argv[1], "-f") == 0) {
+		input = fopen(argv[2], "r");
+		if (input == NULL) {
+			printf("Error: %s could not be opened\n", argv[2]);
+			return 1;
+		}
+		freopen("output.txt", "w", stdout);
+		setbuf(stdout, NULL);
+		dup2(STDOUT_FILENO, STDERR_FILENO);
+	}
 
 	while (running) {
-		printf(">>> ");
-		read = getline(&input_line, &len, stdin);
+		if (input == stdin) {
+			printf(">>> ");
+		}
+		read = getline(&input_line, &len, input);
 		if (read != -1) {
 			command_line cmd = str_tokenize(input_line);
 			for (int i = 0; i < cmd.num_token; i++) {
 				command_line args = space_split(trim(cmd.command_list[i]));
-				execute_command(&args);
+				if (args.num_token > 0) {
+					execute_command(&args);
+				}	
 				free_command_line(&args);
 			}		
 			free_command_line(&cmd);	
+		}
+		else {
+			break;
 		}
 		free(input_line);
 		input_line = NULL;
 		len = 0;
 	}
+	
+	if (input != stdin) {
+		fclose(input);
+		printf("End of file\n");
+		printf("Bye Bye!");
+	}
+
 	free(input_line);
 	return 0;
 

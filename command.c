@@ -27,7 +27,8 @@ void showCurrentDir() {
 	char path[256];
 	memset(path, 0, sizeof(path));
 	if (getcwd(path, sizeof(path)) == NULL) {
-		perror("getcwd");
+		char msg[] = "Could not print working directory.\n";
+		write(STDOUT_FILENO, msg, strlen(msg)); 
 	}
 	write(STDOUT_FILENO, path, strlen(path));
 	write(STDOUT_FILENO, "\n", 1);
@@ -36,14 +37,16 @@ void showCurrentDir() {
 void makeDir(char *dirName) {
 	//mkdir
 	if (mkdir(dirName, 0755) == -1) {
-		perror("mkdir failed");
+		char msg[] = "Directory already exists!\n";
+		write(STDOUT_FILENO, msg, strlen(msg));
 	}
  }
 
 void changeDir(char *dirName) {
 	//cd
 	if (chdir(dirName) == -1) {
-		perror("cd failed");
+		char msg[] = "Failed to change directory\n";
+		write(STDOUT_FILENO, msg, strlen(msg));
 	}
 }
  
@@ -76,12 +79,14 @@ void copyFile(char *sourcePath, char *destinationPath) {
 	}
 	int src_fd = open(sourcePath, O_RDONLY);
 	if (src_fd == -1) {
-		perror("file not found");
+		char msg[] = "Could not find file\n";
+		write(STDOUT_FILENO, msg, strlen(msg));	
 		return;
 	}
 	int dst_fd = open(dst, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (dst_fd == -1) {
-		perror("issue with destination");
+		char msg[] = "Destination error\n";
+		write(STDOUT_FILENO, msg, strlen(msg));
 		close(src_fd);
 	}
 
@@ -138,7 +143,8 @@ void moveFile(char *sourcePath, char *destinationPath) {
 void deleteFile(char *filename) {
 	//rm
 	if (remove(filename) == -1) {
-		perror("Could not remove file");
+		char msg[] = "Could not remove file\n";	
+		write(STDOUT_FILENO, msg, strlen(msg));
 	}
 }
 
