@@ -90,7 +90,7 @@ void moveFile(char *sourcePath, char *destinationPath) {
 	while ((bytes = read(src_fd, buf, sizeof(buf))) > 0) {
 		write(dst_fd, buf, bytes);
 	}
-
+	
 	close(src_fd);
 	close(dst_fd);
 	unlink(sourcePath);
@@ -105,6 +105,12 @@ void deleteFile(char *filename) {
 
 void displayFile(char *filename) {
 	//cat
-	printf("this is cat: not implemented yet\n");
-	return;
+	char buf[4096];
+	int fd = open(filename, O_RDONLY);
+	ssize_t bytes;
+	while ((bytes = read(fd, buf, sizeof(buf))) > 0) {
+		write(STDOUT_FILENO, buf, bytes);
+	}
+	write(STDOUT_FILENO, "\n", 1);
+	close(fd);			
 }
