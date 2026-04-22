@@ -179,7 +179,6 @@ int main(int argc, char* argv[]) {
 		}
 		freopen("output.txt", "w", stdout);
 		setbuf(stdout, NULL);
-		dup2(STDOUT_FILENO, STDERR_FILENO);
 	}
 
 	while (running) {
