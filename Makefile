@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -Wall -Wextra  -Wno-unused-parameter
+CFLAGS = -Wall -Wextra
 
 pseudo-shell: main.o string_parser.o command.o
 	$(CC) $(CFLAGS) -o pseudo-shell main.o string_parser.o command.o
