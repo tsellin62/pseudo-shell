@@ -65,84 +65,104 @@ command_line space_split(char* str) {
 	return cmd;
 }
 
-void execute_command(command_line* args) {
+int execute_command(command_line* args) {
 	switch (get_command(args->command_list[0])) {
 		case LS:
 			if (args->num_token == 1) {
 				listDir();
+				return 0;
 			}
 			else {
 				printf("Error! Unsupported parameters for command: ls\n");
+				return 1;
 			}
 			break;
 		case PWD:
 			if (args->num_token == 1) {
 				showCurrentDir();
+				return 0;
 			}
 			else {
 				printf("Error! Unsupported parameters for command: pwd\n");
+				return 1;
 			}
 			break;
 		case MKDIR:
 			if (args->num_token == 2) {
 				makeDir(args->command_list[1]);
+				return 0;
 			}
 			else {
 				printf("Error! Unsupported parameters for command: mkdir\n");
+				return 1;
 			}
 			break;
 		case CD:
 			if (args->num_token == 2) {
 				changeDir(args->command_list[1]);
+				return 0;
 			}
 			else {
 				printf("Error! Unsupported parameters for command: cd\n");
+				return 1;
 			}
 			break;
 		case CP:
 			if (args->num_token == 3) {
 				copyFile(args->command_list[1], args->command_list[2]);
+				return 0;
 			}
 			else {
 				printf("Error! Unsupported parameters for command: cp\n");
+				return 1;
 			}
 			break;
 		case MV:
 			if (args->num_token == 3) {
 				moveFile(args->command_list[1], args->command_list[2]);
+				return 0;
 			}
 			else {
 				printf("Error! Unsupported parameters for command: mv\n");
+				return 1;
 			}
 			break;
 		case RM:
 			if (args->num_token == 2) {
 				deleteFile(args->command_list[1]);
+				return 0;
 			}
 			else {
 				printf("Error! Unsupported parameters for command: rm\n");
+				return 1;
 			}
 			break;
 		case CAT:
 			if (args->num_token == 2) {
 				displayFile(args->command_list[1]);
+				return 0;
 			}
 			else {
 				printf("Error! Unsupported parameters for command: cat\n");
+				return 1;
 			}
 			break;
 		case QUIT:
 			if (args->num_token == 1) {
 				running = 0;
+				return 0;
 			}
 			else {
 				printf("Error! Unsupported parameters for command: quit\n");
+				return 1;
 			}
 			break;
 		case UNKNOWN:
 			printf("Error! Unrecognized command: %s\n", args->command_list[0]);
+			return 1;
 			break;
 	}
+	return 1;
 }	
 
 int main(int argc, char* argv[]) {
@@ -172,7 +192,10 @@ int main(int argc, char* argv[]) {
 			for (int i = 0; i < cmd.num_token; i++) {
 				command_line args = space_split(trim(cmd.command_list[i]));
 				if (args.num_token > 0) {
-					execute_command(&args);
+					if(execute_command(&args)) {
+						free_command_line(&args);
+						break;
+					}
 				}	
 				free_command_line(&args);
 			}		

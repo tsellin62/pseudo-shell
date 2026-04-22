@@ -156,5 +156,6 @@ void displayFile(char *filename) {
 	while ((bytes = read(fd, buf, sizeof(buf))) > 0) {
 		write(STDOUT_FILENO, buf, bytes);
 	}
+	write(STDOUT_FILENO, "\n", 1);
 	close(fd);			
 }
