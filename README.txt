@@ -1,6 +1,4 @@
 ----------Pseudo Shell-----------
-Name: Tyler Sellin
-UO ID: tsellin
 This project simulates some basic linux shell commands.
 It has functionality for ls, pwd, mkdir, cd, cp, mv, rm, and cat
 To run the project, download the zip file, and build it by
